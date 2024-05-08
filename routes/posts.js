@@ -28,18 +28,21 @@ router.get("/", (req, res) => {
 });
 
 // Get single post
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
     const postId = parseInt(req.params.id);
     const post = posts.find((post) => post.id === postId)
 
     if(!post) {
-        return res.status(404).json({ message: `Post with id: ${postId} not found` });
+        // return res.status(404).json({ message: `Post with id: ${postId} not found` });
+        const err = new Error(`An Error Occured | Post with id: ${postId} not found`);
+        err.status = 404;
+        return next(err);
     }
     res.status(200).json(post);
 });
 
 // Create new post
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
     // console.log(req.body);
     const newPost = {
         id: posts.length + 1,
@@ -47,7 +50,10 @@ router.post("/", (req, res) => {
     };
 
     if(!newPost.title) {
-        return res.status(400).json({ message: "Client error: Please include a title" });
+        const error = new Error("Error: Please include a title");
+        error.status = 404;
+        return next(error);
+        // return res.status(400).json({ message: "Client error: Please include a title" });
     }
 
     posts.push(newPost);
@@ -55,12 +61,15 @@ router.post("/", (req, res) => {
 });
 
 // Update post
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res, next) => {
     const postId = parseInt(req.params.id);
     const post = posts.find((post) => post.id === postId);
 
     if(!post) {
-        return res.status(404).json({ message: `Post with id: ${postId} not found` })
+        const error = new Error(`Post with id: ${postId} not found`);
+        error.status = 404;
+        return next(error);
+        // return res.status(404).json({ message: `Post with id: ${postId} not found` })
     }
 
     post.title = req.body.title;
@@ -68,12 +77,15 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete post
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
     const postId = parseInt(req.params.id);
     const post = posts.find((post) => post.id === postId);
 
     if(!post) {
-        return res.status(404).json({ message: `Post with id: ${postId} not found` });
+        const error = new Error(`Post with id: ${postId} not found`);
+        error.status = 404;
+        return next(error);
+        // return res.status(404).json({ message: `Post with id: ${postId} not found` });
     }
     posts = posts.filter((post) => post.id !== postId);
     res.status(200).json(posts);
