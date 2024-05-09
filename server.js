@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 import posts from "./routes/posts.js";
 import logger from "./middleware/logger.js";
 import errorHandler from "./middleware/error.js";
@@ -7,6 +8,21 @@ import notFound from "./middleware/notFound.js";
 
 const app = express();
 const PORT = process.env.PORT;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// console.log(__filename);
+// console.log(__dirname);
+
+// ----------------------------------------------------
+
+// setup static folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// When we use static folder, we do not have to write code for each file and each route
+// we do not have express.static method takes care of it
+// Eg - if i navigate to localhost:3001/about.html, I can access the about page
+// without defining its route
 
 // ----------------------------------------------------
 
@@ -29,16 +45,6 @@ const PORT = process.env.PORT;
 // app.get("/about", (req, res) => {
 //     res.sendFile(path.join(__dirname, "public", "about.html"));
 // });
-
-// ----------------------------------------------------
-
-// // setup static folder
-// app.use(express.static(path.join(__dirname, "public")));
-
-// When we use static folder, we do not have to write code for each file and each route
-// we do not have express.static method takes care of it
-// Eg - if i navigate to localhost:3001/about.html, I can access the about page
-// without defining its route
 
 // ----------------------------------------------------
 
